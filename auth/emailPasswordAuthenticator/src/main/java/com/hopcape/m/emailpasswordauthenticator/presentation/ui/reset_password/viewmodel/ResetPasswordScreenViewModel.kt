@@ -40,38 +40,26 @@ internal class ResetPasswordScreenViewModel @Inject constructor(
 
     private fun handleRequestVerificationLink(email: Email) {
         resendPassword.invoke(email).handleUseCase(
-            onLoading = {
-                _state.setLoadingOnButton(
-                    loading = it,
-                    loadingText = "Requesting...",
-                    text = "Request Email"
-                )
-            },
-            onSuccess = {
-                _state.update {
-                    it.copy(
-                        bottomSheetState = BottomSheetState(
-                            title = "Verification Email Sent",
-                            primaryButtonState = ButtonState(text = "Login"),
-                            description = "Aa email has been sent to ${_state.value.email.value} with the password reset link. Please update the password and login."
-                        )
-                    )
-                }
-            },
+            onLoading = { _state.setLoadingOnButton(loading = it) },
+            onSuccess = { _state.showBottomSheet() },
             onError = { pushEvent(ResetPasswordEvent.Error(errorHandler.get().resolveError(it))) }
         ).launchIn(viewModelScope)
     }
-
     private fun MutableStateFlow<ResetPasswordState>.setLoadingOnButton(
         loading: Boolean,
-        loadingText: String,
-        text: String
     ) {
         this.update {
             it.copy(
-                buttonState = ButtonState(text = if (loading) loadingText else text)
+                buttonState = ButtonState(text = if (loading) "Requesting..." else "Request Verification Link", loading = loading)
             )
         }
+    }
+    private fun MutableStateFlow<ResetPasswordState>.showBottomSheet() {
+        this.update { it.copy( bottomSheetState = BottomSheetState(
+            title = "Verification Email Sent",
+            primaryButtonState = ButtonState(text = "Login"),
+            description = "Aa email has been sent to ${this.value.email.value} with the password reset link. Please update the password and login."
+        ) ) }
     }
 }
 
