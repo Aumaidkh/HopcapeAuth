@@ -5,7 +5,7 @@ import com.hopcape.m.common.datatypes.FullName
 import com.hopcape.m.common.datatypes.Password
 import com.hopcape.m.common.wrappers.UseCaseResult
 import com.hopcape.m.emailpasswordauthenticator.data.repository.EmailPasswordAuthenticationRepository
-import com.hopcape.m.emailpasswordauthenticator.domain.Errors
+import com.hopcape.m.common.error.DomainError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -21,7 +21,7 @@ class RegisterUser @Inject constructor (
         email: Email,
         password: Password,
         fullName: FullName?
-    ): Flow<UseCaseResult<Unit,Errors>>{
+    ): Flow<UseCaseResult<Unit, DomainError>>{
         return flow {
             val registrationResult =
                 repository.register(email,password,fullName)
@@ -29,7 +29,7 @@ class RegisterUser @Inject constructor (
                 UseCaseResult.fromAuthResult(registrationResult)
             emit(useCaseResult)
         }.catch {
-            emit(UseCaseResult.Error(Errors.NO_INTERNET))
+            emit(UseCaseResult.Error(DomainError.NO_INTERNET))
         }
     }
 }

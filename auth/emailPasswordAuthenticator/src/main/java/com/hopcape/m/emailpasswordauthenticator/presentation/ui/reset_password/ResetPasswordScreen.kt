@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +26,8 @@ import com.hopcape.m.designsystem.components.fields.input_fields.InputField
 import com.hopcape.m.designsystem.components.sheets.AuthBottomSheet
 import com.hopcape.m.designsystem.screenPadding
 import com.hopcape.m.emailpasswordauthenticator.R
+import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.viewmodel.ResetPasswordAction
+import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.viewmodel.ResetPasswordState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

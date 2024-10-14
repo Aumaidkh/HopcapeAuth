@@ -6,7 +6,7 @@ import com.hopcape.m.common.datatypes.Email
 import com.hopcape.m.common.datatypes.FullName
 import com.hopcape.m.common.datatypes.Password
 import com.hopcape.m.common.models.UserModel
-import com.hopcape.m.emailpasswordauthenticator.domain.Errors
+import com.hopcape.m.common.error.DomainError
 
 interface EmailPasswordAuthenticationRepository {
 
@@ -23,7 +23,7 @@ interface EmailPasswordAuthenticationRepository {
         email: Email,
         password: Password,
         fullname: FullName? = null
-    ): AuthResult<Unit, Errors>
+    ): AuthResult<Unit, DomainError>
 
     suspend fun sendResetPasswordLink(
         email: Email,

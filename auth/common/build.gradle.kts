@@ -1,5 +1,7 @@
 plugins {
     id("hopcape.android.library")
+    id("hopcape.hilt")
+    id("hopcape.compose")
 }
 
 android {
@@ -16,4 +18,5 @@ android {
 }
 dependencies {
     lifecycle()
+    navigation()
 }

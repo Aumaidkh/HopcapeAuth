@@ -1,7 +1,8 @@
-package com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password
+package com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.hopcape.m.common.datatypes.Email
+import com.hopcape.m.common.error.ErrorHandler
 import com.hopcape.m.common.viewmodel.TypedViewModel
 import com.hopcape.m.designsystem.components.buttons.ButtonState
 import com.hopcape.m.designsystem.components.fields.input_fields.TextFieldState
@@ -17,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class ResetPasswordScreenViewModel @Inject constructor(
     private val resendPassword: ResendPassword,
+    private val errorHandler: dagger.Lazy<ErrorHandler>,
 ) : TypedViewModel<ResetPasswordState, ResetPasswordEvent, ResetPasswordAction>() {
 
     private val _state = MutableStateFlow(ResetPasswordState())
@@ -56,7 +58,7 @@ internal class ResetPasswordScreenViewModel @Inject constructor(
                     )
                 }
             },
-            onError = { pushEvent(ResetPasswordEvent.Error("Something went wrong...")) }
+            onError = { pushEvent(ResetPasswordEvent.Error(errorHandler.get().resolveError(it))) }
         ).launchIn(viewModelScope)
     }
 

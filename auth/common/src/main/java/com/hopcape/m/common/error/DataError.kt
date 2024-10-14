@@ -1,4 +1,4 @@
-package com.hopcape.m.emailpasswordauthenticator.data
+package com.hopcape.m.common.error
 
 import com.hopcape.m.common.Error
 

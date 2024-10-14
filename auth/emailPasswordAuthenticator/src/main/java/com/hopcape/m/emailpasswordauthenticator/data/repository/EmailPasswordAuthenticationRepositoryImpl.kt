@@ -8,7 +8,7 @@ import com.hopcape.m.common.datatypes.Password
 import com.hopcape.m.common.mapError
 import com.hopcape.m.common.models.UserModel
 import com.hopcape.m.emailpasswordauthenticator.data.datasource.FirebaseDatasource
-import com.hopcape.m.emailpasswordauthenticator.domain.Errors
+import com.hopcape.m.common.error.DomainError
 import javax.inject.Inject
 
 internal class EmailPasswordAuthenticationRepositoryImpl @Inject constructor(
@@ -29,13 +29,13 @@ internal class EmailPasswordAuthenticationRepositoryImpl @Inject constructor(
         email: Email,
         password: Password,
         fullname: FullName?
-    ): AuthResult<Unit, Errors> {
+    ): AuthResult<Unit, DomainError> {
         return datasource.register(
             email = email,
             password = password,
             fullName = fullname
         ).mapError {
-            Errors.INVALID_EMAIL_PASSWORD
+            DomainError.INVALID_EMAIL_PASSWORD
         }
     }
 

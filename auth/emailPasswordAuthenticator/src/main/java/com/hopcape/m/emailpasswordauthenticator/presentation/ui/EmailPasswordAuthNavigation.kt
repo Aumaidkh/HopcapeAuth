@@ -16,9 +16,9 @@ import androidx.navigation.compose.composable
 import com.hopcape.m.common.navigation.AppDestinations
 import com.hopcape.m.common.utils.ScreenEventHandler
 import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.ResetPassword
-import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.ResetPasswordEvent
-import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.ResetPasswordScreenEventHandler
-import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.ResetPasswordScreenViewModel
+import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.viewmodel.ResetPasswordEvent
+import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.viewmodel.ResetPasswordScreenEventHandler
+import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.viewmodel.ResetPasswordScreenViewModel
 import com.hopcape.m.emailpasswordauthenticator.presentation.ui.signin.EmailPasswordAuthScreen
 import com.hopcape.m.emailpasswordauthenticator.presentation.ui.signin.EmailPasswordScreenEventHandler
 import com.hopcape.m.emailpasswordauthenticator.presentation.viewmodel.EmailPasswordAuthenticatorViewModel

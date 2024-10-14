@@ -8,7 +8,7 @@ import com.hopcape.m.common.datatypes.ID
 import com.hopcape.m.common.datatypes.Password
 import com.hopcape.m.common.datatypes.Phone
 import com.hopcape.m.common.models.UserModel
-import com.hopcape.m.emailpasswordauthenticator.data.DataError
+import com.hopcape.m.common.error.DataError
 import com.hopcape.tracemanager.TraceConfig
 import com.hopcape.tracemanager.TraceManager
 import kotlinx.coroutines.tasks.await
@@ -69,7 +69,7 @@ internal class FirebaseDatasource @Inject constructor(
         email: Email,
         password: Password,
         fullName: FullName?
-    ): AuthResult<Unit,DataError> {
+    ): AuthResult<Unit, DataError> {
         return safeFirebaseCall(
             onFailure = { logger.logFailure(::register.name,it) },
             block = {
