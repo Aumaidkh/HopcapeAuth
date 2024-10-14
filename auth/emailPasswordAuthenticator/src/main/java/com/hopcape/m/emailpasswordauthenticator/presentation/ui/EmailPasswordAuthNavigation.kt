@@ -1,6 +1,5 @@
 package com.hopcape.m.emailpasswordauthenticator.presentation.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetValue
@@ -15,14 +14,15 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.hopcape.m.common.navigation.AppDestinations
-import com.hopcape.m.designsystem.components.sheets.AuthBottomSheet
+import com.hopcape.m.common.utils.ScreenEventHandler
 import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.ResetPassword
-import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.ResetPasswordAction
 import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.ResetPasswordEvent
+import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.ResetPasswordScreenEventHandler
 import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.ResetPasswordScreenViewModel
 import com.hopcape.m.emailpasswordauthenticator.presentation.ui.signin.EmailPasswordAuthScreen
+import com.hopcape.m.emailpasswordauthenticator.presentation.ui.signin.EmailPasswordScreenEventHandler
 import com.hopcape.m.emailpasswordauthenticator.presentation.viewmodel.EmailPasswordAuthenticatorViewModel
-import com.hopcape.m.emailpasswordauthenticator.presentation.viewmodel.ViewEvent
+import com.hopcape.m.emailpasswordauthenticator.presentation.viewmodel.EmailPasswordScreenEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.emailPasswordAuthNavigation(
@@ -33,6 +33,7 @@ fun NavGraphBuilder.emailPasswordAuthNavigation(
         route = AppDestinations.LandingScreen.route
     ) {
         val context = LocalContext.current
+        val eventHandler: ScreenEventHandler<EmailPasswordScreenEvent> = EmailPasswordScreenEventHandler(snackbarHostState, navHostController, context)
         val bottomSheetState = rememberStandardBottomSheetState(
             initialValue = SheetValue.Hidden,
             skipHiddenState = false
@@ -44,23 +45,7 @@ fun NavGraphBuilder.emailPasswordAuthNavigation(
         val event by emailPasswordViewModel.event.collectAsState(initial = null)
         event?.let { viewEvent ->
             LaunchedEffect(key1 = viewEvent) {
-                when (viewEvent) {
-                    is ViewEvent.Success -> {
-                        Toast.makeText(
-                            context,
-                            "Logged in...",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-
-                    is ViewEvent.Error -> {
-                        snackbarHostState.showSnackbar(viewEvent.message)
-                    }
-
-                    is ViewEvent.Navigate -> {
-                        navHostController.navigate(viewEvent.route.route)
-                    }
-                }
+                eventHandler.handleEvent(viewEvent)
             }
         }
         EmailPasswordAuthScreen(
@@ -74,6 +59,7 @@ fun NavGraphBuilder.emailPasswordAuthNavigation(
     composable(
         route = AppDestinations.ForgotPasswordScreen.route
     ) {
+        val eventHandler: ScreenEventHandler<ResetPasswordEvent> = ResetPasswordScreenEventHandler(navHostController, snackbarHostState)
         val bottomSheetState = rememberStandardBottomSheetState(
             initialValue = SheetValue.Hidden,
             skipHiddenState = false
@@ -84,19 +70,7 @@ fun NavGraphBuilder.emailPasswordAuthNavigation(
         val event by resetPasswordScreenViewModel.event.collectAsState(initial = null)
         event?.let { viewEvent ->
             LaunchedEffect(key1 = viewEvent) {
-                when (viewEvent) {
-                    is ResetPasswordEvent.Navigate -> {
-                        if (viewEvent.goBack) {
-                            navHostController.navigateUp()
-                        }
-                    }
-
-                    is ResetPasswordEvent.Error -> {
-                        snackbarHostState.showSnackbar(viewEvent.message)
-                    }
-
-                    else -> {}
-                }
+                eventHandler.handleEvent(viewEvent)
             }
         }
         ResetPassword(
@@ -106,3 +80,4 @@ fun NavGraphBuilder.emailPasswordAuthNavigation(
         )
     }
 }
+

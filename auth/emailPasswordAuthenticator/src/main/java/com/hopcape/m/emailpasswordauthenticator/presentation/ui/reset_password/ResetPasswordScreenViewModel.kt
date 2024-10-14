@@ -27,18 +27,8 @@ internal class ResetPasswordScreenViewModel @Inject constructor(
             is ResetPasswordAction.OnEmailChange -> _state.update { it.copy(emailField = TextFieldState(action.email)) }
             ResetPasswordAction.OnButtonClick -> handleButtonClick(_state.value.email)
             ResetPasswordAction.RequestVerificationLink -> handleRequestVerificationLink(_state.value.email)
-            ResetPasswordAction.OnDismissBottomSheet -> {
-                _state.update { it.copy(bottomSheetState = null) }
-            }
-
-            ResetPasswordAction.OnGoBackToLogin -> {
-                pushEvent(
-                    ResetPasswordEvent.Navigate(
-                        null,
-                        true
-                    )
-                )
-            }
+            ResetPasswordAction.OnDismissBottomSheet -> _state.update { it.copy(bottomSheetState = null) }
+            ResetPasswordAction.OnGoBackToLogin -> pushEvent(ResetPasswordEvent.NavigateBack)
         }
     }
 

@@ -28,7 +28,7 @@ class EmailPasswordAuthenticatorViewModel @Inject constructor(
     private val emailValidator: dagger.Lazy<EmailValidator>,
     private val passwordValidator: dagger.Lazy<PasswordValidator>,
     private val signInUser: SignInUser,
-): TypedViewModel<ViewState,ViewEvent,Action>() {
+): TypedViewModel<ViewState,EmailPasswordScreenEvent,Action>() {
 
     private val _state = MutableStateFlow(ViewState())
     val state get() = _state.asStateFlow()
@@ -40,7 +40,7 @@ class EmailPasswordAuthenticatorViewModel @Inject constructor(
             Action.OnFacebookSignInClick -> {}
             Action.OnGoogleSignInClick -> {}
             is Action.OnPasswordChange -> updatePassword(action.text)
-            Action.ResetPassword -> pushEvent(ViewEvent.Navigate(AppDestinations.ForgotPasswordScreen))
+            Action.ResetPassword -> pushEvent(EmailPasswordScreenEvent.Navigate(AppDestinations.ForgotPasswordScreen))
             Action.OnResendVerificationEmail -> {}
             Action.OnDismissBottomSheet -> _state.update { it.copy(bottomSheetState = null) }
         }
@@ -73,7 +73,7 @@ class EmailPasswordAuthenticatorViewModel @Inject constructor(
             _state.email(),
             _state.password()
         ).handleUseCase(
-            onSuccess = { pushEvent(ViewEvent.Success) },
+            onSuccess = { pushEvent(EmailPasswordScreenEvent.Success) },
             onLoading = { loading -> _state.update { it.copy(buttonState = ButtonState(loading = loading, text = if (loading) "Logging in..." else "Login")) }},
             onError = { handleError(it) }
         ).launchIn(viewModelScope)
@@ -101,7 +101,7 @@ class EmailPasswordAuthenticatorViewModel @Inject constructor(
             }
             return
         }
-        pushEvent(ViewEvent.Error(error.errorToString()))
+        pushEvent(EmailPasswordScreenEvent.Error(error.errorToString()))
     }
 
     private inline fun validate(doAfterValidation: () -> Unit){
