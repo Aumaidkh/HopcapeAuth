@@ -82,24 +82,7 @@ class EmailPasswordAuthenticatorViewModel @Inject constructor(
 
     private fun handleError(error: Error){
         if (error.emailNotVerified()){
-            _state.update {
-                it.copy(
-                    bottomSheetState = BottomSheetState(
-                        title = "Verify Email",
-                        description = "An email has already been sent to your email address. Please verify",
-                        primaryButtonState = ButtonState(
-                            enabled = true,
-                            loading = false,
-                            text = "Dismiss"
-                        ),
-                        secondaryButtonState = ButtonState(
-                            enabled = true,
-                            loading = false,
-                            text = "Resend Email"
-                        )
-                    )
-                )
-            }
+            _state.showEmailNotVerifiedBottomSheet()
             return
         }
         pushEvent(EmailPasswordScreenEvent.Error(errorHandler.get().resolveError(error)))
@@ -156,6 +139,27 @@ class EmailPasswordAuthenticatorViewModel @Inject constructor(
 
     private fun Error.emailNotVerified(): Boolean {
         return this == DataError.EMAIL_NOT_VERIFIED
+    }
+
+    private fun MutableStateFlow<ViewState>.showEmailNotVerifiedBottomSheet(){
+        this.update {
+            it.copy(
+                bottomSheetState = BottomSheetState(
+                    title = "Verify Email",
+                    description = "An email has already been sent to your email address. Please verify",
+                    primaryButtonState = ButtonState(
+                        enabled = true,
+                        loading = false,
+                        text = "Dismiss"
+                    ),
+                    secondaryButtonState = ButtonState(
+                        enabled = true,
+                        loading = false,
+                        text = "Resend Email"
+                    )
+                )
+            )
+        }
     }
 
 }
