@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "733682259815",
+    "project_id": "mobileauthdemo-200c8",
+    "storage_bucket": "mobileauthdemo-200c8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:733682259815:android:f84ab5208ad2b2b32c41c2",
+        "android_client_info": {
+          "package_name": "com.hopcape.m.emailpasswordauthenticator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuM5XsLRZRBDA73ZIJL9l9ZpD_BC-499E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:733682259815:android:9dc26a29376985962c41c2",
+        "android_client_info": {
+          "package_name": "com.hopcape.m.mobileauth"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuM5XsLRZRBDA73ZIJL9l9ZpD_BC-499E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:733682259815:android:201f9b08419626b72c41c2",
+        "android_client_info": {
+          "package_name": "com.hopcape.m.phonebasedauthenticator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuM5XsLRZRBDA73ZIJL9l9ZpD_BC-499E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
