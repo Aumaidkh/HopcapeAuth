@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberStandardBottomSheetState
@@ -33,12 +34,9 @@ import com.hopcape.m.emailpasswordauthenticator.R
 fun ResetPassword(
     modifier: Modifier = Modifier,
     state: ResetPasswordState = ResetPasswordState(),
-    onAction: (ResetPasswordAction) -> Unit = {}
+    onAction: (ResetPasswordAction) -> Unit = {},
+    sheetState: SheetState,
 ) {
-    val bottomSheetState = rememberStandardBottomSheetState(
-        initialValue = SheetValue.Hidden,
-        skipHiddenState = false
-    )
     val keyboardController = LocalSoftwareKeyboardController.current
     Column(
         modifier = modifier
@@ -84,7 +82,7 @@ fun ResetPassword(
     state.bottomSheetState?.let {
         AuthBottomSheet(
             state = it,
-            sheetState = bottomSheetState,
+            sheetState = sheetState,
             onDismiss = { onAction(ResetPasswordAction.OnDismissBottomSheet) },
             onPrimaryButtonClick = { onAction(ResetPasswordAction.OnGoBackToLogin)}
         )

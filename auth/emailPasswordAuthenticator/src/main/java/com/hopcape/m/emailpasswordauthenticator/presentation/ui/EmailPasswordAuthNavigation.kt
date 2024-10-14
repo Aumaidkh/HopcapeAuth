@@ -1,6 +1,7 @@
 package com.hopcape.m.emailpasswordauthenticator.presentation.ui
 
 import android.widget.Toast
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHostState
@@ -20,7 +21,6 @@ import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.R
 import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.ResetPasswordEvent
 import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.ResetPasswordScreenViewModel
 import com.hopcape.m.emailpasswordauthenticator.presentation.ui.signin.EmailPasswordAuthScreen
-import com.hopcape.m.emailpasswordauthenticator.presentation.viewmodel.Action
 import com.hopcape.m.emailpasswordauthenticator.presentation.viewmodel.EmailPasswordAuthenticatorViewModel
 import com.hopcape.m.emailpasswordauthenticator.presentation.viewmodel.ViewEvent
 
@@ -37,6 +37,7 @@ fun NavGraphBuilder.emailPasswordAuthNavigation(
             initialValue = SheetValue.Hidden,
             skipHiddenState = false
         )
+        val scrollState = rememberScrollState()
         val emailPasswordViewModel = hiltViewModel<EmailPasswordAuthenticatorViewModel>()
         val emailPasswordFormState by emailPasswordViewModel.state.collectAsState()
 
@@ -63,23 +64,16 @@ fun NavGraphBuilder.emailPasswordAuthNavigation(
             }
         }
         EmailPasswordAuthScreen(
-            formState = emailPasswordFormState,
-            onFormAction = emailPasswordViewModel::onAction
+            uiState = emailPasswordFormState,
+            onAction = emailPasswordViewModel::onAction,
+            bottomSheetState = bottomSheetState,
+            scrollState = scrollState
         )
-        emailPasswordFormState.bottomSheetState?.let { state ->
-            AuthBottomSheet(
-                sheetState = bottomSheetState,
-                state = state,
-                onPrimaryButtonClick = { emailPasswordViewModel.onAction(Action.OnDismissBottomSheet) },
-                onSecondaryButtonClick = { emailPasswordViewModel.onAction(Action.OnResendVerificationEmail) }
-            )
-        }
     }
 
     composable(
         route = AppDestinations.ForgotPasswordScreen.route
     ) {
-        val context = LocalContext.current
         val bottomSheetState = rememberStandardBottomSheetState(
             initialValue = SheetValue.Hidden,
             skipHiddenState = false
@@ -107,14 +101,8 @@ fun NavGraphBuilder.emailPasswordAuthNavigation(
         }
         ResetPassword(
             state = state,
-            onAction = resetPasswordScreenViewModel::onAction
+            onAction = resetPasswordScreenViewModel::onAction,
+            sheetState = bottomSheetState
         )
-        state.bottomSheetState?.let { state ->
-            AuthBottomSheet(
-                sheetState = bottomSheetState,
-                state = state,
-                onPrimaryButtonClick = { resetPasswordScreenViewModel.onAction(ResetPasswordAction.OnGoBackToLogin) }
-            )
-        }
     }
 }
