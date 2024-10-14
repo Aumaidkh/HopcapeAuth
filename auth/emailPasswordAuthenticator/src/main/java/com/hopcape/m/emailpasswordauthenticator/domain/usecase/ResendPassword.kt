@@ -16,7 +16,6 @@ class ResendPassword @Inject constructor(
     operator fun invoke(email: Email): Flow<UseCaseResult<Unit,out Error>> {
         return flow {
             emit(UseCaseResult.Loading())
-            kotlinx.coroutines.delay(3000)
             val registrationResult =
                 repository.sendResetPasswordLink(email)
             val useCaseResult =
