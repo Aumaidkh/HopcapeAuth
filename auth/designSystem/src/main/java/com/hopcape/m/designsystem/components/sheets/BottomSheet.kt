@@ -52,7 +52,7 @@ fun AuthBottomSheet(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             FilledButton(
                 modifier = Modifier.fillMaxWidth(),
                 state = state.primaryButtonState,
