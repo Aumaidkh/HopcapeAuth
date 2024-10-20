@@ -6,7 +6,7 @@ import com.hopcape.m.common.datatypes.Password
 import com.hopcape.m.common.models.UserModel
 import com.hopcape.m.common.wrappers.UseCaseResult
 import com.hopcape.m.emailpasswordauthenticator.data.repository.EmailPasswordAuthenticationRepository
-import com.hopcape.m.emailpasswordauthenticator.domain.Errors
+import com.hopcape.m.common.error.DomainError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -27,7 +27,7 @@ class SignInUser @Inject constructor(
                 UseCaseResult.fromAuthResult(authResult)
             emit(useCaseResult)
         }.catch {
-            emit(UseCaseResult.Error(Errors.NO_INTERNET))
+            emit(UseCaseResult.Error(DomainError.NO_INTERNET))
         }
     }
 

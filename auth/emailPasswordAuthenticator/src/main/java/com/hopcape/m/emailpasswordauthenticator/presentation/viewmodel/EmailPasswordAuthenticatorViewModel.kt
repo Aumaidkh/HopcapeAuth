@@ -4,18 +4,18 @@ import androidx.lifecycle.viewModelScope
 import com.hopcape.m.common.Error
 import com.hopcape.m.common.datatypes.Email
 import com.hopcape.m.common.datatypes.Password
+import com.hopcape.m.common.error.DataError
+import com.hopcape.m.common.error.DomainError
+import com.hopcape.m.common.error.ErrorHandler
 import com.hopcape.m.common.navigation.AppDestinations
 import com.hopcape.m.common.viewmodel.TypedViewModel
 import com.hopcape.m.common.wrappers.UseCaseResult
 import com.hopcape.m.designsystem.components.buttons.ButtonState
 import com.hopcape.m.designsystem.components.fields.input_fields.TextFieldState
 import com.hopcape.m.designsystem.components.sheets.BottomSheetState
-import com.hopcape.m.emailpasswordauthenticator.data.DataError
-import com.hopcape.m.emailpasswordauthenticator.domain.Errors
 import com.hopcape.m.emailpasswordauthenticator.domain.usecase.SignInUser
 import com.hopcape.m.emailpasswordauthenticator.domain.usecase.validation.EmailValidator
 import com.hopcape.m.emailpasswordauthenticator.domain.usecase.validation.PasswordValidator
-import com.hopcape.m.emailpasswordauthenticator.domain.usecase.validation.ValidationError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,8 +27,9 @@ import javax.inject.Inject
 class EmailPasswordAuthenticatorViewModel @Inject constructor(
     private val emailValidator: dagger.Lazy<EmailValidator>,
     private val passwordValidator: dagger.Lazy<PasswordValidator>,
-    private val signInUser: SignInUser,
-): TypedViewModel<ViewState,ViewEvent,Action>() {
+    private val errorHandler: dagger.Lazy<ErrorHandler>,
+    private val signInUser: SignInUser
+): TypedViewModel<ViewState,EmailPasswordScreenEvent,Action>() {
 
     private val _state = MutableStateFlow(ViewState())
     val state get() = _state.asStateFlow()
@@ -40,9 +41,10 @@ class EmailPasswordAuthenticatorViewModel @Inject constructor(
             Action.OnFacebookSignInClick -> {}
             Action.OnGoogleSignInClick -> {}
             is Action.OnPasswordChange -> updatePassword(action.text)
-            Action.ResetPassword -> pushEvent(ViewEvent.Navigate(AppDestinations.ForgotPasswordScreen))
+            Action.ResetPassword -> pushEvent(EmailPasswordScreenEvent.Navigate(AppDestinations.ForgotPasswordScreen))
             Action.OnResendVerificationEmail -> {}
             Action.OnDismissBottomSheet -> _state.update { it.copy(bottomSheetState = null) }
+            Action.OnRegisterClick -> pushEvent(EmailPasswordScreenEvent.Navigate(AppDestinations.RegisterScreen))
         }
     }
 
@@ -73,7 +75,7 @@ class EmailPasswordAuthenticatorViewModel @Inject constructor(
             _state.email(),
             _state.password()
         ).handleUseCase(
-            onSuccess = { pushEvent(ViewEvent.Success) },
+            onSuccess = { pushEvent(EmailPasswordScreenEvent.Success) },
             onLoading = { loading -> _state.update { it.copy(buttonState = ButtonState(loading = loading, text = if (loading) "Logging in..." else "Login")) }},
             onError = { handleError(it) }
         ).launchIn(viewModelScope)
@@ -81,36 +83,19 @@ class EmailPasswordAuthenticatorViewModel @Inject constructor(
 
     private fun handleError(error: Error){
         if (error.emailNotVerified()){
-            _state.update {
-                it.copy(
-                    bottomSheetState = BottomSheetState(
-                        title = "Verify Email",
-                        description = "An email has already been sent to your email address. Please verify",
-                        primaryButtonState = ButtonState(
-                            enabled = true,
-                            loading = false,
-                            text = "Dismiss"
-                        ),
-                        secondaryButtonState = ButtonState(
-                            enabled = true,
-                            loading = false,
-                            text = "Resend Email"
-                        )
-                    )
-                )
-            }
+            _state.showEmailNotVerifiedBottomSheet()
             return
         }
-        pushEvent(ViewEvent.Error(error.errorToString()))
+        pushEvent(EmailPasswordScreenEvent.Error(errorHandler.get().resolveError(error)))
     }
 
     private inline fun validate(doAfterValidation: () -> Unit){
         val emailValidationResult =
             emailValidator.get().invoke(_state.email()).also { validationResult ->
                 val errorMessage = when(validationResult.error){
-                    ValidationError.EMTPY_EMAIL -> "Email can't be empty"
-                    ValidationError.INVALID_EMAIL -> "Invalid email"
-                    ValidationError.BLANK_EMAIL -> "Email can't be blank"
+                    DomainError.EMTPY_EMAIL -> "Email can't be empty"
+                    DomainError.INVALID_EMAIL -> "Invalid email"
+                    DomainError.BLANK_EMAIL -> "Email can't be blank"
                     else -> null
                 }
                 _state.update {
@@ -124,9 +109,9 @@ class EmailPasswordAuthenticatorViewModel @Inject constructor(
             passwordValidator.get().invoke(_state.password()).also {
                     validationResult ->
                 val errorMessage = when(validationResult.error){
-                    ValidationError.INVALID_PASSWORD -> "Invalid Password"
-                    ValidationError.EMPTY_PASSWORD -> "Password can't be emtpy"
-                    ValidationError.PASSWORD_TOO_SHORT -> "Password too short"
+                    DomainError.INVALID_PASSWORD -> "Invalid Password"
+                    DomainError.EMPTY_PASSWORD -> "Password can't be emtpy"
+                    DomainError.PASSWORD_TOO_SHORT -> "Password too short"
                     else -> null
                 }
                 _state.update {
@@ -157,28 +142,25 @@ class EmailPasswordAuthenticatorViewModel @Inject constructor(
         return this == DataError.EMAIL_NOT_VERIFIED
     }
 
-}
-
-fun Error.errorToString(): String {
-    return when(this){
-        is Errors -> {
-            when(this){
-                Errors.NO_INTERNET -> "No internet connection"
-                Errors.INVALID_EMAIL_PASSWORD -> "Invalid Email and Password"
-                Errors.SOMETHING_WENT_WRONG -> "Something went wrong"
-            }
+    private fun MutableStateFlow<ViewState>.showEmailNotVerifiedBottomSheet(){
+        this.update {
+            it.copy(
+                bottomSheetState = BottomSheetState(
+                    title = "Verify Email",
+                    description = "An email has already been sent to your email address. Please verify",
+                    primaryButtonState = ButtonState(
+                        enabled = true,
+                        loading = false,
+                        text = "Dismiss"
+                    ),
+                    secondaryButtonState = ButtonState(
+                        enabled = true,
+                        loading = false,
+                        text = "Resend Email"
+                    )
+                )
+            )
         }
-        is DataError -> {
-            when(this){
-                DataError.EMAIL_NOT_VERIFIED -> "Email Not Verified"
-                DataError.UNKNOWN_ERROR -> "Unknown Error"
-                DataError.CONNECTION_ERROR -> "Connection Error"
-                DataError.USER_NOT_FOUND -> "User not found"
-                DataError.INVALID_EMAIL_AND_PASSWORD -> "Invalid Email and Password"
-                DataError.ERROR_EMAIL_ALREADY_IN_USE -> "Email already in use"
-                DataError.ERROR_WEAK_PASSWORD -> "Password too Weak"
-            }
-        }
-        else -> "Unknown Error"
     }
+
 }

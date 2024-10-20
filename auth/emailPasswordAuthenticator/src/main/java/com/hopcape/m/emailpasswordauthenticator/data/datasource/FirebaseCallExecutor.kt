@@ -6,7 +6,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.hopcape.m.common.AuthResult
-import com.hopcape.m.emailpasswordauthenticator.data.DataError
+import com.hopcape.m.common.error.DataError
 
 inline fun <D> safeFirebaseCall(
     onFailure: (Exception) -> Unit = {},

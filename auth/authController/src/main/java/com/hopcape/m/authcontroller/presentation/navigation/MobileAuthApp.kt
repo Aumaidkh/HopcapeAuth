@@ -33,11 +33,6 @@ fun MobileAuthApp(
         ) {
             emailPasswordAuthNavigation(navController,snackbarHostState)
             composable(
-                route = AppDestinations.RegisterScreen.route
-            ) {
-
-            }
-            composable(
                 route = AppDestinations.RequestOtp.route
             ) {
 

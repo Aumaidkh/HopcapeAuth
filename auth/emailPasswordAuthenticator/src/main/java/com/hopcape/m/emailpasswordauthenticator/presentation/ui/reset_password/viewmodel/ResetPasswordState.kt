@@ -1,4 +1,4 @@
-package com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password
+package com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.viewmodel
 
 import com.hopcape.m.common.datatypes.Email
 import com.hopcape.m.common.viewmodel.ScreenState
