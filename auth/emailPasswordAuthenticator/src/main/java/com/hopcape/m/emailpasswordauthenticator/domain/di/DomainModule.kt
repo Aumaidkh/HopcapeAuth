@@ -5,6 +5,7 @@ import com.hopcape.m.emailpasswordauthenticator.domain.usecase.RegisterUser
 import com.hopcape.m.emailpasswordauthenticator.domain.usecase.ResendPassword
 import com.hopcape.m.emailpasswordauthenticator.domain.usecase.SignInUser
 import com.hopcape.m.emailpasswordauthenticator.domain.usecase.validation.EmailValidator
+import com.hopcape.m.emailpasswordauthenticator.domain.usecase.validation.FullNameValidator
 import com.hopcape.m.emailpasswordauthenticator.domain.usecase.validation.PasswordValidator
 import dagger.Module
 import dagger.Provides
@@ -45,6 +46,12 @@ internal abstract class DomainModule {
         @ViewModelScoped
         internal fun providesEmailValidatorUseCase(): EmailValidator {
             return EmailValidator()
+        }
+
+        @Provides
+        @ViewModelScoped
+        internal fun providesFullNameValidatorUseCase(): FullNameValidator {
+            return FullNameValidator()
         }
 
         @Provides

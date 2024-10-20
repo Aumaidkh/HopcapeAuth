@@ -14,6 +14,7 @@ import com.hopcape.m.designsystem.components.fields.input_fields.TextFieldState
 import com.hopcape.m.designsystem.components.sheets.BottomSheetState
 import com.hopcape.m.emailpasswordauthenticator.domain.usecase.RegisterUser
 import com.hopcape.m.emailpasswordauthenticator.domain.usecase.validation.EmailValidator
+import com.hopcape.m.emailpasswordauthenticator.domain.usecase.validation.FullNameValidator
 import com.hopcape.m.emailpasswordauthenticator.domain.usecase.validation.PasswordValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +25,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterScreenViewModel @Inject constructor(
+    private val nameValidator: dagger.Lazy<FullNameValidator>,
     private val emailValidator: dagger.Lazy<EmailValidator>,
     private val passwordValidator: dagger.Lazy<PasswordValidator>,
     private val register: dagger.Lazy<RegisterUser>,
@@ -74,6 +76,21 @@ class RegisterScreenViewModel @Inject constructor(
         pushEvent(RegisterScreenEvent.NavigateToLogin)
     }
     private inline fun validateAndRegister(doAfterValidation: () -> Unit) {
+        val fullNameValidationResult =
+            emailValidator.get().invoke(_state.email()).also { validationResult ->
+                val errorMessage = when (validationResult.error) {
+                    DomainError.NAME_EMPTY -> "Full Name can't be empty"
+                    DomainError.NAME_BLANK -> "Full Name can't be blank"
+                    DomainError.INVALID_NAME -> "Invalid Full Name"
+                    DomainError.NAME_TOO_SHORT -> "Full Name should contain at least 3 characters"
+                    else -> null
+                }
+                _state.update {
+                    it.copy(
+                        email = it.fullName.copy(error = errorMessage)
+                    )
+                }
+            }
         val emailValidationResult =
             emailValidator.get().invoke(_state.email()).also { validationResult ->
                 val errorMessage = when (validationResult.error) {
@@ -134,7 +151,8 @@ class RegisterScreenViewModel @Inject constructor(
         val hasError = listOf(
             emailValidationResult,
             passwordValidatorResult,
-            confirmValidatorResult
+            confirmValidatorResult,
+            fullNameValidationResult
         ).any {
             it is UseCaseResult.Error
         }

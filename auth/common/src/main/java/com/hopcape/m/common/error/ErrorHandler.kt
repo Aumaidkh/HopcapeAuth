@@ -34,6 +34,7 @@ class ErrorHandler {
             EMPTY_PASSWORD -> "Password can't be empty"
             PASSWORD_TOO_SHORT -> "Password too short"
             INVALID_PASSWORD -> "Invalid password"
+            else -> "Unknown Error"
         }
     }
 }
