@@ -29,14 +29,12 @@ internal class EmailPasswordAuthenticationRepositoryImpl @Inject constructor(
         email: Email,
         password: Password,
         fullname: FullName?
-    ): AuthResult<Unit, DomainError> {
+    ): AuthResult<Unit, out Error> {
         return datasource.register(
             email = email,
             password = password,
             fullName = fullname
-        ).mapError {
-            DomainError.INVALID_EMAIL_PASSWORD
-        }
+        )
     }
 
     override suspend fun sendResetPasswordLink(email: Email): AuthResult<Unit,out Error> {

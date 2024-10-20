@@ -44,6 +44,7 @@ class EmailPasswordAuthenticatorViewModel @Inject constructor(
             Action.ResetPassword -> pushEvent(EmailPasswordScreenEvent.Navigate(AppDestinations.ForgotPasswordScreen))
             Action.OnResendVerificationEmail -> {}
             Action.OnDismissBottomSheet -> _state.update { it.copy(bottomSheetState = null) }
+            Action.OnRegisterClick -> pushEvent(EmailPasswordScreenEvent.Navigate(AppDestinations.RegisterScreen))
         }
     }
 

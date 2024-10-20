@@ -15,6 +15,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.hopcape.m.common.navigation.AppDestinations
 import com.hopcape.m.common.utils.ScreenEventHandler
+import com.hopcape.m.emailpasswordauthenticator.presentation.ui.register.RegisterScreen
+import com.hopcape.m.emailpasswordauthenticator.presentation.ui.register.RegisterScreenEventHandler
+import com.hopcape.m.emailpasswordauthenticator.presentation.ui.register.RegisterScreenViewModel
 import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.ResetPassword
 import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.viewmodel.ResetPasswordEvent
 import com.hopcape.m.emailpasswordauthenticator.presentation.ui.reset_password.viewmodel.ResetPasswordScreenEventHandler
@@ -76,6 +79,30 @@ fun NavGraphBuilder.emailPasswordAuthNavigation(
         ResetPassword(
             state = state,
             onAction = resetPasswordScreenViewModel::onAction,
+            sheetState = bottomSheetState
+        )
+    }
+    composable(
+        route = AppDestinations.RegisterScreen.route
+    ){
+        val viewModel = hiltViewModel<RegisterScreenViewModel>()
+        val eventHandler = RegisterScreenEventHandler(snackbarHostState, navHostController)
+        val state by viewModel.state.collectAsState()
+        val event by viewModel.event.collectAsState(initial = null)
+        val scrollState = rememberScrollState()
+        val bottomSheetState = rememberStandardBottomSheetState(
+            initialValue = SheetValue.Hidden,
+            skipHiddenState = false
+        )
+        event?.let {
+            LaunchedEffect(key1  = it){
+                eventHandler.handleEvent(it)
+            }
+        }
+        RegisterScreen(
+            state = state,
+            scrollState = scrollState,
+            onAction = viewModel::onAction,
             sheetState = bottomSheetState
         )
     }

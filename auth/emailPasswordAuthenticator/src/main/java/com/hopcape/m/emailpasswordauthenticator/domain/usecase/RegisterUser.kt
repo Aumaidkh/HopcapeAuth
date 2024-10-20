@@ -1,5 +1,6 @@
 package com.hopcape.m.emailpasswordauthenticator.domain.usecase
 
+import com.hopcape.m.common.Error
 import com.hopcape.m.common.datatypes.Email
 import com.hopcape.m.common.datatypes.FullName
 import com.hopcape.m.common.datatypes.Password
@@ -16,13 +17,13 @@ import javax.inject.Singleton
 class RegisterUser @Inject constructor (
     private val repository: EmailPasswordAuthenticationRepository
 ) {
-
     operator fun invoke(
         email: Email,
         password: Password,
         fullName: FullName?
-    ): Flow<UseCaseResult<Unit, DomainError>>{
+    ): Flow<UseCaseResult<Unit, out Error>>{
         return flow {
+            emit(UseCaseResult.Loading())
             val registrationResult =
                 repository.register(email,password,fullName)
             val useCaseResult =

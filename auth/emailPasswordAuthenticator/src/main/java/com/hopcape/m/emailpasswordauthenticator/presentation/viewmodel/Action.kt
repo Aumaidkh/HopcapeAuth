@@ -11,5 +11,6 @@ sealed interface Action: UserAction {
     data object OnFacebookSignInClick: Action
     data object OnDismissBottomSheet: Action
     data object OnResendVerificationEmail: Action
+    data object OnRegisterClick: Action
 
 }

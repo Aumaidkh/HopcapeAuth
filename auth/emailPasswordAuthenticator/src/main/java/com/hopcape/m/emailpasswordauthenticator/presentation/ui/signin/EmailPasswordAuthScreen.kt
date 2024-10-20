@@ -74,7 +74,7 @@ fun EmailPasswordAuthScreen(
         RegisterButton(
             modifier = Modifier
                 .padding(top = 30.dp),
-            onClick = {}
+            onClick = { onAction(Action.OnRegisterClick) }
         )
     }
     uiState.bottomSheetState?.let { state ->

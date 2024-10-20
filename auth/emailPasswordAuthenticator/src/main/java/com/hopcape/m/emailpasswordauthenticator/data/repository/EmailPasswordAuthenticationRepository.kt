@@ -23,7 +23,7 @@ interface EmailPasswordAuthenticationRepository {
         email: Email,
         password: Password,
         fullname: FullName? = null
-    ): AuthResult<Unit, DomainError>
+    ): AuthResult<Unit, out Error>
 
     suspend fun sendResetPasswordLink(
         email: Email,
